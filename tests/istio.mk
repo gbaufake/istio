@@ -87,6 +87,8 @@ e2e_stackdriver: istioctl generate_e2e_yaml e2e_stackdriver_run
 
 e2e_all: istioctl generate_e2e_yaml e2e_all_run
 
+e2e_kiali: istioctl generate_yaml_kiali e2e_kiali_run
+
 # *_run targets do not rebuild the artifacts and test with whatever is given
 
 e2e_simple_run: out_dir
@@ -114,6 +116,12 @@ e2e_dashboard_run: out_dir
 
 e2e_bookinfo_run: out_dir
 	go test -v -timeout 60m ./tests/e2e/tests/bookinfo -args ${E2E_ARGS} ${EXTRA_E2E_ARGS}
+
+e2e_kiali_run: out_dir
+	go test -v -timeout 60m ./tests/e2e/tests/kiali -args --auth_enable=true \
+	--egress=false --ingress=false \
+	--rbac_enable=false --cluster_wide ${E2E_ARGS} ${EXTRA_E2E_ARGS} ${CAPTURE_LOG}
+
 
 e2e_stackdriver_run: out_dir
 	go test -v -timeout 25m ./tests/e2e/tests/stackdriver -args ${E2E_ARGS} ${EXTRA_E2E_ARGS} --cluster_wide --gcp_proj=${GCP_PROJ} --sa_cred=/etc/service-account/service-account.json
